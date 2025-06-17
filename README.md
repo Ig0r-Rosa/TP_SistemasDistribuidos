@@ -21,9 +21,9 @@ sudo apt update && sudo apt install python3
 
 ## Como funciona?
 - Comunicação de cliente servidor:
-    ```markdown
     ![Diagrama de Sequência](Diagrama.png)
 
+    ```markdown
     Cada mensagem inclui o relógio vetorial (VC) do emissor.
 
     O servidor atualiza seu VC comparando os valores recebidos com os locais (usando max).
@@ -42,9 +42,9 @@ sudo apt update && sudo apt install python3
         * Exibe a mensagem e o VC atualizado no terminal/GUI.
 
 - Demonstração da recepção e envio de mensagens:
-    ```markdown
     ![Recepção e envio de mensagem](Exemplo_1.png)
 
+    ```markdown
     Blocos de código relevante:
 
     *Cliente (envio)*
