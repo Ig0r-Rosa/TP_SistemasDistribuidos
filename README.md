@@ -13,11 +13,11 @@ Implementação de um sistema cliente-servidor em Python que demonstra o uso de 
   collections # Dicionários padrão
 
 ## Como instalar as dependências
-# No Linux (Debian/Ubuntu):
+** No Linux (Debian/Ubuntu): **
 sudo apt update && sudo apt install python3
 
-# No Windows:
-# Baixe o instalador em https://www.python.org/downloads/
+** No Windows: **
+Baixe o instalador em https://www.python.org/downloads/
 
 ## Como funciona?
 - Comunicação de cliente servidor:
