@@ -1,81 +1,165 @@
 # Relógios Vetoriais em Sistemas Distribuídos
 
-## Descrição
-Implementação de um sistema cliente-servidor em Python que demonstra o uso de **relógios vetoriais** para ordenação causal de eventos em sistemas distribuídos. O servidor coordena a troca de mensagens entre múltiplos clientes, garantindo que a relação "aconteceu-antes" (`happened-before`) seja preservada.
+## 📌 Descrição do Projeto
 
-## Requisitos
-- **Sistema Operacional**: Linux, Windows ou macOS
-- **Python**: 3.12.3 ou superior
-- **Bibliotecas**:
-  ```bash
-  socket    # Comunicação em rede
-  threading # Concorrência
-  collections # Dicionários padrão
+Este projeto apresenta uma implementação prática de um sistema distribuído usando **Relógios Vetoriais (Vector Clocks)** para garantir a ordenação causal de eventos.  
 
-## Como instalar as dependências
-**No Linux (Debian/Ubuntu):**
-sudo apt update && sudo apt install python3
+O sistema segue o modelo **cliente-servidor**, onde múltiplos clientes se conectam ao servidor, enviam mensagens e recebem respostas, tudo com controle de causalidade.
 
-**No Windows:**
-Baixe o instalador em https://www.python.org/downloads/
+Essa implementação atende aos requisitos propostos pela disciplina de **Sistemas Distribuídos (UFSC - Araranguá)**, conforme o trabalho prático 2025.1.
 
-## Como funciona?
-- Comunicação de cliente servidor:
-    ![Diagrama de Sequência](Diagrama.png)
+## ✅ Requisitos Funcionais
 
-    ```markdown
-    Cada mensagem inclui o relógio vetorial (VC) do emissor.
+- **Linguagem utilizada:** Python 3.12.3
+- **Paradigma:** Concorrência e comunicação cliente-servidor via sockets TCP.
+- **Bibliotecas usadas:**
+  - `socket` (Comunicação em rede)
+  - `threading` (Concorrência nas conexões)
+  - `collections` (Estrutura de dicionário padrão para o vetor de relógios)
 
-    O servidor atualiza seu VC comparando os valores recebidos com os locais (usando max).
+## ✅ Comunicação entre Cliente e Servidor
 
-    O VC resultante é enviado de volta aos clientes para sincronização.
+### Modelo:
 
-- Como o serviço é executado no servidor?
-    O servidor mantém um relógio vetorial global (ex: {0: 3, 1: 2} onde 0 é o servidor).
+- Cada cliente envia mensagens ao servidor contendo:
+  - Seu **ID de processo**
+  - Seu **relógio vetorial local**
+  - O **conteúdo da mensagem**
 
-        * Para cada mensagem recebida:
+- O servidor, ao receber:
+  1. **Atualiza seu relógio vetorial**, comparando os valores recebidos com os locais (usando o máximo entre os vetores).
+  2. **Incrementa seu próprio contador** no relógio vetorial.
+  3. **Exibe a mensagem recebida** e o novo estado do vetor de relógios no terminal.
+  4. **Envia o vetor de relógios atualizado de volta aos clientes**, para sincronização.
 
-        * Incrementa seu próprio contador.
+### Exemplo de fluxo:
 
-        * Atualiza os contadores dos outros processos com os valores máximos.
+Cliente 1: Envia mensagem "Olá!" com VC {0:1, 1:1}
+Servidor: Atualiza VC para {0:2, 1:1} e envia resposta.
 
-        * Exibe a mensagem e o VC atualizado no terminal/GUI.
+## ✅ Diagrama de Comunicação
 
-- Demonstração da recepção e envio de mensagens:
-    ![Recepção e envio de mensagem](Exemplo_1.png)
+![Diagrama de comuicação](Diagrama.png)
 
-    ```markdown
-    Blocos de código relevante:
+Representa o fluxo de envio e recebimento de mensagens, incluindo a atualização do relógio vetorial no servidor.
 
-    *Cliente (envio)*
-    self.vector_clock[self.process_id] += 1
-    data = f"{self.process_id};{dict(self.vector_clock)};{message}"
+## ✅ Como Executar
 
-    *Servidor (atualização do vc)*
-    for pid in received_vc:
-        self.vector_clock[pid] = max(self.vector_clock[pid], received_vc[pid])
+### 1. Iniciar o servidor:
 
-## Como executar
-1. **Servidor**:
-   ```bash
-   python server.py
+Abra um terminal e execute:
 
-   Saida esperada:
-   ```bash
-   Servidor ouvindo em localhost:5000
+```
 
-2. **Cliente**:
-   ```bash
-   python cliente.py
-   (`abra varios`)
+python server.py
 
-   - Digite um ID único para cada cliente (ex: 1, 2).
-   - Envie mensagens via prompt.
+```
 
-   *Exemplo de uso*
-   ```bash
-   (Cliente 1) Digite a mensagem: Olá!
-   (Servidor) Mensagem recebida de Cliente 1: "Olá!" | VC: {0:1, 1:1}
+Saída esperada:
 
+```
+
+Servidor ouvindo em localhost:5000
+
+```
 
 ---
+
+### 2. Iniciar os clientes:
+
+Abra múltiplos terminais (um para cada cliente) e execute:
+
+```
+
+python cliente.py
+
+````
+
+Ao iniciar, cada cliente solicitará um **ID único de processo** (exemplo: 1, 2, 3...).
+
+---
+
+### 3. Enviar mensagens:
+
+No terminal de cada cliente, digite mensagens.  
+O servidor receberá, processará, atualizará o relógio vetorial e enviará de volta a resposta.
+
+---
+
+## ✅ Exemplo de uso
+
+![Exemplo de comunicação do relógio vetorial](Exemplo_1.png)
+
+## ✅ Blocos de Código Relevantes
+
+### Cliente - Envio de Mensagem:
+
+```python
+self.vector_clock[self.process_id] += 1
+data = f"{self.process_id};{dict(self.vector_clock)};{message}"
+self.sock.sendall(data.encode())
+````
+
+### Servidor - Atualização do Relógio Vetorial:
+
+```python
+for pid in received_vc:
+    self.vector_clock[pid] = max(self.vector_clock[pid], received_vc[pid])
+self.vector_clock[self.server_id] += 1
+```
+
+---
+
+## ✅ Requisitos Atendidos do Trabalho:
+
+* ✔️ Comunicação Cliente-Servidor
+* ✔️ Identificação de processos por ID
+* ✔️ Envio e Recebimento de mensagens com controle causal
+* ✔️ Tela de exibição mostrando:
+
+  * Mensagem enviada
+  * Mensagem recebida
+  * Estado do relógio vetorial
+* ✔️ Exemplo de código destacado no README
+* ✔️ Diagrama de comunicação (Diagrama.png)
+
+---
+
+## ✅ Instruções para Instalação
+
+**Linux:**
+
+```
+sudo apt update
+sudo apt install python3
+```
+
+**Windows:**
+
+Baixe o Python em:
+[https://www.python.org/downloads/](https://www.python.org/downloads/)
+
+---
+
+## ✅ Possíveis Extensões Futuras
+
+* Implementar visualização gráfica dos eventos
+* Adicionar logs em arquivo
+* Suporte a múltiplos servidores
+* Persistência de estado entre execuções
+
+---
+
+## ✅ Autor(es):
+
+* Nome: Igor da Rosa, Ítalo Manzine, André Lima.
+
+---
+
+## ✅ Referências:
+
+* Material da disciplina de Sistemas Distribuídos (UFSC - 2025.1)
+* \[Lamport, 1978] - Time, Clocks, and the Ordering of Events in a Distributed System
+* Documentação oficial de Python ([https://docs.python.org/3/library/](https://docs.python.org/3/library/))
+
+```
