@@ -2,7 +2,7 @@
 
 ## 📌 Descrição do Projeto
 
-Este projeto apresenta uma implementação prática de um sistema distribuído usando **Relógios Vetoriais (Vector Clocks)** para garantir a ordenação causal de eventos.  
+Este projeto apresenta uma implementação prática de um sistema distribuído usando **Relógios Vetoriais (Vector Clocks)** para garantir a ordenação causal de eventos.
 
 O sistema segue o modelo **cliente-servidor**, onde múltiplos clientes se conectam ao servidor, enviam mensagens e recebem respostas, tudo com controle de causalidade.
 
@@ -22,11 +22,12 @@ Essa implementação atende aos requisitos propostos pela disciplina de **Sistem
 ### Modelo:
 
 - Cada cliente envia mensagens ao servidor contendo:
+
   - Seu **ID de processo**
   - Seu **relógio vetorial local**
   - O **conteúdo da mensagem**
-
 - O servidor, ao receber:
+
   1. **Atualiza seu relógio vetorial**, comparando os valores recebidos com os locais (usando o máximo entre os vetores).
   2. **Incrementa seu próprio contador** no relógio vetorial.
   3. **Exibe a mensagem recebida** e o novo estado do vetor de relógios no terminal.
@@ -51,7 +52,7 @@ Abra um terminal e execute:
 
 ```
 
-python server.py
+python servidor.py
 
 ```
 
@@ -73,7 +74,7 @@ Abra múltiplos terminais (um para cada cliente) e execute:
 
 python cliente.py
 
-````
+```
 
 Ao iniciar, cada cliente solicitará um **ID único de processo** (exemplo: 1, 2, 3...).
 
@@ -81,7 +82,7 @@ Ao iniciar, cada cliente solicitará um **ID único de processo** (exemplo: 1, 2
 
 ### 3. Enviar mensagens:
 
-No terminal de cada cliente, digite mensagens.  
+No terminal de cada cliente, digite mensagens.
 O servidor receberá, processará, atualizará o relógio vetorial e enviará de volta a resposta.
 
 ---
@@ -98,7 +99,7 @@ O servidor receberá, processará, atualizará o relógio vetorial e enviará de
 self.vector_clock[self.process_id] += 1
 data = f"{self.process_id};{dict(self.vector_clock)};{message}"
 self.sock.sendall(data.encode())
-````
+```
 
 ### Servidor - Atualização do Relógio Vetorial:
 
@@ -161,5 +162,7 @@ Baixe o Python em:
 * Material da disciplina de Sistemas Distribuídos (UFSC - 2025.1)
 * \[Lamport, 1978] - Time, Clocks, and the Ordering of Events in a Distributed System
 * Documentação oficial de Python ([https://docs.python.org/3/library/](https://docs.python.org/3/library/))
+
+```
 
 ```
